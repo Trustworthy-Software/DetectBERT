@@ -1,0 +1,19 @@
+Model:
+    input_len: 128
+    hidden_len: 128
+    catg_num: 2
+    aggregation: "random" # "addition", "average", "random", "DetectBERT"
+
+Train:
+    device: 2
+    n_epochs: 20
+    save_steps: 50000
+    total_steps: 2500000
+
+Optimizer:
+    opt: lookahead_radam
+    lr: 0.0002
+    opt_eps: null 
+    opt_betas: null
+    momentum: null 
+    weight_decay: 0.00001
