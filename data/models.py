@@ -92,6 +92,15 @@ class MultiHeadedSelfAttention(nn.Module):
         mask : (B(batch_size) x S(seq_len))
         * split D(dim) into (H(n_heads), W(width of head)) ; D = H * W
         """
+        # Get sequence length and ensure device compatibility
+        seq_len = x.size(1)
+        try:
+            pos = torch.arange(seq_len, dtype=torch.long, device=x.device)
+        except RuntimeError as e:
+            print(f"CUDA error in forward pass: {str(e)}")
+            print("Falling back to CPU for position encoding")
+            pos = torch.arange(seq_len, dtype=torch.long).to(x.device)
+
         # (B, S, D) -proj-> (B, S, D) -split-> (B, S, H, W) -trans-> (B, H, S, W)
         q, k, v = self.proj_q(x), self.proj_k(x), self.proj_v(x)
         q, k, v = (split_last(x, (self.n_heads, -1)).transpose(1, 2)
